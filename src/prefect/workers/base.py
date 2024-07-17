@@ -213,7 +213,11 @@ class BaseJobConfiguration(BaseModel):
             **flow_labels,
             **self.labels,
         }
-        self.name = self.name or flow_run.name
+        if self.name:
+            # Increases user flexibility for infra names, e.g. "{flow.name}/{flow_run.name}"
+            self.name = self.name.format(flow=flow, flow_run=flow_run)
+        else:
+            self.name = flow_run.name
         self.command = self.command or self._base_flow_run_command()
 
     @staticmethod
